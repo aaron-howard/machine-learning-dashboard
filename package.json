@@ -1,0 +1,21 @@
+{
+  "name": "ml-dashboard",
+  "version": "1.0.0",
+  "description": "Machine Learning Dashboard with Interactive Visualizations",
+  "main": "app.py",
+  "scripts": {
+    "start": "python app.py",
+    "dev": "python app.py --debug"
+  },
+  "dependencies": {
+    "d3": "^7.8.5",
+    "bootstrap": "^5.3.0",
+    "socket.io-client": "^4.7.2"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  },
+  "keywords": ["machine-learning", "dashboard", "visualization", "tensorflow", "d3"],
+  "author": "Aaron",
+  "license": "MIT"
+}

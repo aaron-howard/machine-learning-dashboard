@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ML Dashboard - Model Performance & Predictions</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="{{ url_for('static', filename='css/dashboard.css') }}" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-brain me-2"></i>ML Dashboard
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <span class="navbar-text" id="connection-status">
+                            <i class="fas fa-circle text-success"></i> Connected
+                        </span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container-fluid mt-4">
+        <!-- Control Panel -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-cogs me-2"></i>Model Control Panel
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="btn-group" role="group">
+                                    <button type="button" class="btn btn-success" id="train-classification">
+                                        <i class="fas fa-graduation-cap me-1"></i>Train Classification
+                                    </button>
+                                    <button type="button" class="btn btn-info" id="train-regression">
+                                        <i class="fas fa-chart-line me-1"></i>Train Regression
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="real-time-toggle" checked>
+                                    <label class="form-check-label" for="real-time-toggle">
+                                        Real-time Updates
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <div class="alert alert-info" id="status-message" style="display: none;">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    <span id="status-text">Ready to train a model</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Model Information -->
+        <div class="row mb-4" id="model-info-section" style="display: none;">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-info-circle me-2"></i>Model Information
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row" id="model-details">
+                            <!-- Model details will be populated here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Performance Metrics -->
+        <div class="row mb-4" id="performance-section" style="display: none;">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-chart-bar me-2"></i>Performance Metrics
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row" id="metrics-cards">
+                            <!-- Metrics cards will be populated here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Row -->
+        <div class="row mb-4" id="charts-section" style="display: none;">
+            <!-- Performance Trend Chart -->
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-chart-line me-2"></i>Performance Trend
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="performance-trend-chart"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Predictions Scatter Plot -->
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-dot-circle me-2"></i>Predictions vs Actual
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="predictions-scatter-chart"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Additional Visualizations -->
+        <div class="row mb-4" id="additional-charts-section" style="display: none;">
+            <!-- Confusion Matrix (for classification) -->
+            <div class="col-lg-6" id="confusion-matrix-section" style="display: none;">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-th me-2"></i>Confusion Matrix
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="confusion-matrix-chart"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature Importance (if available) -->
+            <div class="col-lg-6" id="feature-importance-section" style="display: none;">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-sort-amount-down me-2"></i>Feature Importance
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="feature-importance-chart"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Real-time Predictions Table -->
+        <div class="row mb-4" id="predictions-table-section" style="display: none;">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-table me-2"></i>Sample Predictions
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover" id="predictions-table">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Index</th>
+                                        <th>Actual</th>
+                                        <th>Predicted</th>
+                                        <th>Confidence</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Table rows will be populated here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Modal -->
+    <div class="modal fade" id="loadingModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body text-center">
+                    <div class="spinner-border text-primary mb-3" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <h5>Training Model...</h5>
+                    <p class="text-muted">Please wait while the model is being trained.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- D3.js -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <!-- Custom JavaScript -->
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+</body>
+</html>
